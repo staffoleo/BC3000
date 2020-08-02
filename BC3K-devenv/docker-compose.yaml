@@ -1,0 +1,32 @@
+version: "3.3"
+services:
+
+  #Infrastructure
+  mssql:
+    container_name: bc3k-mssql
+    image: microsoft/mssql-server-linux:2017-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${MSSQL_SA_PASSWORD}
+      - MSSQL_PID=${MSSQL_PID}
+    ports: 
+      - "1434:1433"
+    
+  minio:
+    container_name: bc3k-minio
+    image: minio/minio:latest
+    entrypoint: sh
+    command: -c 'mkdir -p /data/documents && /usr/bin/minio --compat server /data'
+    environment: 
+      - MINIO_ACCESS_KEY=bc3k
+      - MINIO_SECRET_KEY=bc3k@4000
+    ports: 
+      - "19000:9000"
+
+networks: 
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.100.1.1/24
